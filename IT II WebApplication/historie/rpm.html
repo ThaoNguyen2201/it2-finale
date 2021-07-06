@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="..\Home\style.css">
+  <link rel="stylesheet" href="..\historie\historie.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+  <title>Innovation Technology II</title>
+</head>
+
+<body>
+  <div id="top">
+    <div class="logo">
+      <a href="..\Condition\condition.html"> <img src="..\image\arrow.png" alt="pfeil" style="width:50px;height:30px;vertical-align :middle; "></a>
+      <p>Home / Historie / Rpm</p>
+    </div>
+    <div class="languages">
+      <img src="..\image\British.png" alt="">
+      <img style="margin-bottom: 4px;" src="..\image\germany.png" alt="">
+    </div>
+  </div>
+
+  <div id="actionbar">
+    <!-- the drop down menu -->
+    <div class="menu">
+      <button class="dropDown">Historie</button>
+      <div class="Content">
+        <a href="..\historie\historie.html">Temperatur</a>
+        <a href="..\historie\akkustik.html">Akustik</a>
+        <a href="..\historie\vibration.html">Vibration</a>
+        <a href="..\historie\rpm.html">Rpm</a>
+        <a href="..\historie\qualitaet.html">Qualität</a>
+      </div>
+    </div>
+    <div class="actionbar-icons">
+      <a href="#"><img src="..\image\warning.png" alt=""></a>
+      <a href="" class="actionbar-escalation">Eskalation</a>
+      <a href="" class="actionbar-timer">Timer</a>
+    </div>
+  </div>
+  <div class="clear">
+
+  </div>
+  <div class="" style="margin-bottom:350px; margin-top:50px">
+    <div class="chart-container" style="position: relative; height:40vh; width:80vw; margin:auto">
+      <canvas id="canvas" style="background-color: aliceblue;"></canvas>
+    </div>
+
+  </div>
+
+
+  <script>
+        // Variables colors
+        var backgroundColor = new Array; // new
+        var chartColorsBackground = { // NEW
+            color1: 'rgba(65,105,225,0.4)', // Default color blue
+            color2: 'rgb(34,139,34)', // Color green
+            //color3: '#800000' // Color red
+            color3:'rgba(238,64,0)' // changed the color, but it's still red
+        };
+
+        var borderColor = new Array;
+        var chartColorsBorder = {
+            color11: 'rgba(65,105,225,1)', // Default color blue,- I change the last value from 0.4 to 1.0 it marks it stronger!
+            color22: 'rgb(34,139,34)', // Color green
+            //color33: '#800000' // Color red
+            color33: 'rgba(238,34,34)'
+        }
+
+        var ctx_live_rpm = document.getElementById("canvas");
+        var myChart_rpm = new Chart(ctx_live_rpm, {
+            type: 'bar',
+            data: {
+                labels: [], // X-Axes: maybe we can use here the date in a 10 sec interval?
+                datasets: [{
+                    label: 'Rpm', // NEW
+                    data: [],
+                    borderWidth: 1,
+                    borderColor: borderColor, // NEW
+                    backgroundColor: backgroundColor, // NEW
+
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: "Umdrehungen pro Minute",
+                },
+                legend: {
+                    //display: false // if use falsse, we can't see our legends! I would prefer to see legends!
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'revolutions per minute'
+                        }
+                    }],
+                    // NEW LINES
+                    xAxes: [{
+                      ticks: {
+                        maxTicksLimit: 12   // this will show max 12 (timestamp)-values on the x-axis,- it looks better!
+                      }
+                    }]
+
+                }
+            }
+        });
+        // Function get Data
+        var getDataRpm = function () {
+            $.ajax({
+                // Get Data from URL and save in variable data
+                url: 'http://it2wi1.if-lab.de/rest/mpr_fall3' ,
+                success: function (data) {
+                    // Get the quality array
+                    var Rpm = data.map(function (e) {
+                        return e.werte.Rpm;
+                    });
+
+                    // select the current date
+                    var date_actual = data.map(function (e) {
+                      return e.datum;
+                    });
+
+                    // Replace dot with comma
+                    //let Laut = Rpm.map(dots => dots.toString().replace(',', '.'))
+                    // For loop to seperate each element in an array. The time between 2 elements is 2 seconds
+                    for (let i = 0; i < data.length; i++) {
+                        setTimeout(() => {
+
+                            myChart_rpm.data.labels.push(date_actual[i]); // x-axis, current date
+
+                            //myChart.data.labels.push(i); // x-axis
+                            myChart_rpm.data.datasets[0].data.push(Rpm[i]); // the actual rpm
+                            myChart_rpm.data.labels.shift;
+                            myChart_rpm.update();
+
+                            myChart_rpm.data.datasets[0].backgroundColor = chartColorsBackground.color1;
+                            myChart_rpm.data.datasets[0].borderColor = chartColorsBorder.color11;
+
+                        }, i * 100); // standard = 2000; take 100 for fast presentation
+
+                    }
+
+                }
+
+            });
+        };
+
+
+        getDataRpm();
+
+    </script>
+  </body>
+
+</html>

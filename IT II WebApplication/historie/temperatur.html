@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="..\Home\style.css">
+  <link rel="stylesheet" href="..\historie\historie.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+  <title>Innovation Technology II</title>
+</head>
+
+<body>
+  <div id="top">
+    <div class="logo">
+      <a href="..\Condition\condition.html"> <img src="..\image\arrow.png" alt="pfeil" style="width:50px;height:30px;vertical-align :middle; "></a>
+      <p>Home / Historie / Temperature</p>
+    </div>
+    <div class="languages">
+      <img src="..\image\British.png" alt="">
+      <img style="margin-bottom: 4px;" src="..\image\germany.png" alt="">
+    </div>
+  </div>
+
+  <div id="actionbar">
+    <!-- the drop down menu -->
+    <div class="menu">
+      <button class="dropDown">Historie</button>
+      <div class="Content">
+        <a href="#">Temperatur</a>
+        <a href="..\historie\akkustik.html">Akustik</a>
+        <a href="..\historie\vibration.html">Vibration</a>
+        <a href="..\historie\rpm.html">Rpm</a>
+        <a href="..\historie\qualitaet.html">Qualität</a>
+      </div>
+    </div>
+    <div class="actionbar-icons">
+      <a href="#"><img src="..\image\warning.png" alt=""></a>
+      <a href="" class="actionbar-escalation">Eskalation</a>
+      <a href="" class="actionbar-timer">Timer</a>
+    </div>
+  </div>
+  <div class="clear">
+
+  </div>
+
+  <!-- Visualization CHart -->
+  <div class="" style="margin-bottom:350px; margin-top:50px">
+    <div class="chart-container" style="position: relative; height:40vh; width:80vw; margin:auto">
+      <canvas id="canvas" style="background-color: aliceblue;"></canvas>
+    </div>
+    <!-- Create button to run the whole function -->
+    <div class="TempButton">
+      <button onclick="getData()">Click me</button>
+      <div></div>
+    </div>
+  </div>
+
+<!-- Popup Box Fehlerbehandlung -->
+  <div class="popup inactive">
+    <div class="popup-box">
+      <img src="..\image\error.png" alt="">
+      <div style="display: flex; align-items: center; flex-direction: column; margin-top: 20px; position: relative;">
+        <p>
+          Ein Fehler ist beim Temperatur aufgetreten!
+        </p>
+        <a href="..\fehlerHandlung\fehler.html">
+          <div class="popup-fehler-box">
+            Zum Fehlerbehandlung
+          </div>
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+  <script>
+    // Variables colors
+    var backgroundColor = new Array; // new
+    var chartColorsBackground = { // NEW
+      color1: 'rgba(65,105,225,0.4)', // Default color blue
+      color2: 'rgb(34,139,34)', // Color green
+      //color3: '#800000' // Color red
+      color3: 'rgba(238,64,0)' // changed the color, but it's still red
+    };
+
+    var borderColor = new Array;
+    var chartColorsBorder = {
+      color11: 'rgba(65,105,225,1)', // Default color blue,- I change the last value from 0.4 to 1.0 it marks it stronger!
+      color22: 'rgb(34,139,34)', // Color green
+      //color33: '#800000' // Color red
+      color33: 'rgba(238,34,34)'
+    }
+
+    var ctx_live = document.getElementById("canvas");
+    var myChart = new Chart(ctx_live, {
+      type: 'bar',
+      data: {
+        labels: [], // X-Axes: maybe we can use here the date in a 10 sec interval?
+        datasets: [{
+          label: 'Temperatur', // NEW
+          data: [],
+          borderWidth: 1,
+          borderColor: borderColor, // NEW
+          backgroundColor: backgroundColor, // NEW
+
+        }, {
+          // new l.47-63
+          label: "Toleranzgrenze: 75 °C",
+          type: 'line',
+          backgroundColor: 'rgb(50,205,50)', // LimeGreen
+          borderColor: 'rgb(34,139,34)', // ForestGreen
+          data: [],
+          fill: false,
+          pointRadius: 0, // this value disable the point drawing
+          borderWidth: 3,
+        }, {
+          label: "Schadensgrenze: 150 °C",
+          type: 'line',
+          backgroundColor: 'rgba(238,64,0)', // OrgangeRed2
+          borderColor: 'rgba(178,34,34)', // firebrick
+          data: [],
+          fill: false,
+          pointRadius: 0,
+          borderWidth: 3,
+        }]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: "Temperaturverlauf der Wellenkupplung",
+        },
+        legend: {
+          //display: false // if use falsse, we can't see our legends! I would prefer to see legends!
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'Temperatur in °C'
+            }
+          }],
+          // NEW LINES
+          xAxes: [{
+            ticks: {
+              maxTicksLimit: 12 // this will show max 12 (timestamp)-values on the x-axis,- it looks better!
+            }
+          }]
+
+        }
+      }
+    });
+    // Function get Data
+    var getData = function() {
+      $.ajax({
+        // Get Data from URL and save in variable data
+        url: 'http://it2wi1.if-lab.de/rest/mpr_fall3',
+        success: function(data) {
+          // Get the Temperatur array
+          var Temperatur = data.map(function(e) {
+            return e.werte.Tavg_temp;
+          });
+          // variable of temperature tolerance - NEW
+          var temp_tolerance = 75;
+          // variable of temperature damage zone - NEW
+          var temp_damage = 150;
+          // select the current date
+          var date_actual = data.map(function(e) {
+            return e.datum;
+          });
+
+          // Replace dot with comma
+          let Temp = Temperatur.map(dots => dots.toString().replace(',', '.'))
+          // For loop to seperate each element in an array. The time between 2 elements is 2 seconds
+          for (let i = 0; i < data.length; i++) {
+            setTimeout(() => {
+
+              myChart.data.labels.push(date_actual[i]); // x-axis, current date
+
+              //myChart.data.labels.push(i); // x-axis
+              myChart.data.datasets[0].data.push(Temp[i]); // the actual temperature
+              myChart.data.datasets[1].data.push(temp_tolerance); // the actuel temp_tolerance line - NEW
+              myChart.data.datasets[2].data.push(temp_damage); // the actuel temp_damage line - NEW
+              myChart.data.labels.shift;
+              myChart.update();
+              // change the color if the values of temperature over the tolerance border or over the damage border
+              if (Temp[i] < 75) {
+                myChart.data.datasets[0].backgroundColor = chartColorsBackground.color1;
+                myChart.data.datasets[0].borderColor = chartColorsBorder.color11;
+
+              }
+              if ((Temp[i] >= 75) && (Temp[i] < 150)) {
+                myChart.data.datasets[0].backgroundColor = chartColorsBackground.color2;
+                myChart.data.datasets[0].borderColor = chartColorsBorder.color22;
+
+              }
+              if (Temp[i] >= 150) {
+                myChart.data.datasets[0].backgroundColor = chartColorsBackground.color3;
+                myChart.data.datasets[0].borderColor = chartColorsBorder.color33;
+
+              }
+            }, i * 100); // standard = 2000; take 100 for fast presentation
+
+          }
+
+        }
+
+      });
+    };
+
+
+    // Popup closing
+    let closeButton = document.querySelector(".popup-box img");
+    let popup = document.querySelector(".popup");
+    closeButton.onclick = function() {
+      popup.classList.add("inactive");
+      console.log("clicked");
+    }
+  </script>
+
+
+</body>
+
+</html>

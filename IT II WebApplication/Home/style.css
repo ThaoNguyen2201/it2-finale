@@ -1,0 +1,124 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+
+body{
+    /* VORGEGEBEN: Schriftart: Roboto; anders als so, habe ich es nicht hinbekommen. Es funktioniert aber so */
+    font-family:  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #717E87;
+
+}
+
+#top {
+  width: 100%;
+  height: 80px;
+  color: #FFF;
+  position: relative;
+  display: flex;
+  background-color: #314151;
+}
+
+.logo {
+  display: flex;
+  width: 4000px;
+  font-size: 25px;
+}
+.logo img{
+  margin-right: 10px;
+}
+.languages {
+  width: 100%;
+  text-align: right;
+}
+.languages img{
+  padding-top: 4px;
+}
+.languages img:not(last-child){
+  margin-right: 4px;
+}
+.logo,
+.languages {
+  padding: 20px 25px 0px 30px;
+}
+
+#actionbar {
+  height: 80px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  margin-top: 20px;
+  padding-right: 15px;
+}
+#actionbar a{
+  text-decoration: none;
+}
+#actionbar  img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+#actionbar .actionbar-icons{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.actionbar-escalation {
+  background-color: #d24525;
+}
+
+.actionbar-timer {
+  background-color: #217446;
+}
+
+.actionbar-escalation,
+.actionbar-timer {
+  color: #FFF;
+  padding: 10px;
+  border-radius: 10px;
+  border: solid 0.5px #b8babc;
+  box-shadow: 1px 1px 1px 1px #666;
+  margin-right: 10px;
+  margin-left: 10px;
+  height: 20px;
+  line-height: 20px;
+}
+.clear{
+  clear: both;
+}
+#menu {
+  position: relative;
+  display: flex;
+  margin-top: 50px;
+}
+#menu a{
+  text-decoration: none;
+}
+#menu a:hover{
+  opacity: 0.9;
+}
+/* .menu-button */
+#menu a {
+  width: 180px;
+  height: 120px;
+  background-color: #314151;
+  border-radius: 12px;
+  margin: auto;
+  border: solid 0.5px #b8babc;
+  box-shadow: 1px 1px 1px 1px #666;
+  color: #FFF;
+  padding: 20px;
+  text-align: center;
+}
+
+#menu a img{
+  margin-top: 20px;
+  height: 60px;
+  width: 60px;
+}
+.fehler {}
+
+.condition {}
+
+.historie {}

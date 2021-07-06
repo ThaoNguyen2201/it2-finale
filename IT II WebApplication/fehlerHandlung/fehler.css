@@ -1,0 +1,119 @@
+
+#menu a {
+  width: 240px;
+  height: 120px;
+}
+#menu a img{
+  margin-top: 30px;
+  height: 40px;
+  width: 40px;
+}
+.fehler{
+  position: relative;
+  height: 450px;
+  width: 1000px;
+  margin: auto;
+  margin-top: 80px;
+  margin-bottom: 80px;
+  display: none;
+}
+.fehler .fehler-detail{
+  position: absolute;
+  display: flex;
+  opacity: 0;
+}
+.fehler .fehler-detail.active{
+  opacity: 1;
+}
+.fehler img{
+  height: 450;
+  width: 450;
+  margin-right: 20px;
+}
+.fehler-detail .fehler-description {
+  padding-top: 10px;
+}
+.fehler-detail .fehler-description h2{
+  margin-bottom: 10px;
+}
+.fehler-detail .fehler-description p{
+  line-height: 1.6;
+}
+
+/* slider control */
+.slider-controls {
+  width: 1000px;
+  margin: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  overflow: hidden;
+    display: none;
+}
+.slider-controls .prev,
+.slider-controls .next {
+  background-color: #314151;
+  color: #FFF;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 5px;
+  user-select: none;
+  width: 20%;
+}
+.slider-controls .prev {
+  float: left;
+}
+.slider-controls .next {
+  float: right;
+}
+.slider-controls .prev.disabled,
+.slider-controls .next.disabled {
+  background-color: #314151;
+  cursor: no-drop;
+}
+.slider-controls .indicators {
+  width: 55%;
+  float: left;
+}
+.slider-controls .indicators ul {
+  list-style: none;
+  margin: 0;
+  text-align: center;
+}
+.slider-controls .indicators ul li {
+  display: inline-block;
+  background-color: #F6F6F6;
+  color: #333;
+  font-weight: bold;
+  height: 28px;
+  width: 28px;
+  border-radius: 4px;
+  margin: 0 2px;
+  line-height: 28px;
+  cursor: pointer;
+}
+.slider-controls .indicators ul li.active {
+  background-color: #314151;
+  color: #FFF;
+}
+
+/* support */
+.box {
+  background-color: white;
+  width: 600px;
+  margin: auto;
+  margin-bottom: 20px;
+}
+input[type=text], select, textarea {
+    max-width: 450px;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    margin-left: 40px;
+    resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */;
+}
