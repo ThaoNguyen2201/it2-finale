@@ -15,11 +15,12 @@
   <div id="top">
     <div class="logo">
       <a href="..\Condition\condition.html"> <img src="..\image\arrow.png" alt="pfeil" style="width:50px;height:30px;vertical-align :middle; "></a>
-      <p>Home / Historie / Vibration</p>
+      <p>Home / Condition Monitoring / Vibration</p>
     </div>
     <div class="languages">
       <img src="..\image\British.png" alt="">
       <img style="margin-bottom: 4px;" src="..\image\germany.png" alt="">
+	  <img style="margin-bottom: 4px;" src="..\image\Vietnam.png" alt="">
     </div>
   </div>
 
@@ -45,7 +46,7 @@
 
   </div>
 
-  <!-- Visualization CHart -->
+  <!-- Visualization Chart -->
   <div class="" style="margin-bottom:350px; margin-top:50px">
     <div class="chart-container" style="position: relative; height:40vh; width:80vw; margin:auto">
       <canvas id="canvas" style="background-color: aliceblue;"></canvas>
@@ -57,19 +58,29 @@
     <div class="popup-box">
       <img src="..\image\error.png" alt="">
       <div style="display: flex; align-items: center; flex-direction: column; margin-top: 20px; position: relative;">
-        <p>
-          Ein Fehler ist beim Vibration aufgetreten!
-        </p>
+        <p>Die Schadensgrenze wurde überschritten.<br> Klicken Sie auf 'Zur Fehlerbehandlung', um das Problem zu beheben.</p>
         <a href="..\fehlerHandlung\fehler.html">
           <div class="popup-fehler-box">
-            Zum Fehlerbehandlung
+            Zur Fehlerbehandlung
           </div>
         </a>
-
       </div>
-
     </div>
-
+  </div>
+  <!-- NEW - this should be a new pop up box,- but something doesn't work -->
+  <div class="popup inactive-vibr">
+    <div class="popup-box-vibr">
+      <img src="..\image\error.png" alt="">
+      <div style="display: flex; align-items: center; flex-direction: column; margin-top: 20px; position: relative;">
+        <p>Achtung!<br> Indiz für loses Teil! Fehlermeldung 666 <br> Überprüfen Sie die Akustik. 
+          Falls die Fehlermeldung 666 ebenfalls auftritt. Klicken Sie auf 'Zur Fehlerbehandlung', um das Problem zu beheben.</p>
+        <a href="..\fehlerHandlung\fehler.html">
+          <div class="popup-fehler-box">
+            Zur Fehlerbehandlung
+          </div>
+        </a>
+      </div>
+    </div>
   </div>
   <script>
           // Variables colors
@@ -171,7 +182,26 @@
                       });
 
                       // Replace dot with comma
-                      let Vibr = Vibration.map(dots => dots.toString().replace(',', '.'))
+                      let Vibr = Vibration.map(dots => dots.toString().replace(',', '.'));
+
+                      // Popup closing
+                      let closeButton = document.querySelector(".popup-box img");
+
+                      let popup_tol = document.querySelector(".popup");
+                      closeButton.onclick = function() {
+                        popup_tol.classList.add("inactive");
+                      }
+                      // ALSO NEW BY PEET - TO CREATE A SECOND POP-UP
+                      let closeButtonLosesTeil = document.querySelector(".popup-box-vibr img");
+
+                      let popup_losesTeil = document.querySelector(".popup-vibr");
+                      closeButtonLosesTeil.onclick = function() {
+                        popup_losesTeil.classList.add("inactive");
+                      }
+
+                      // singletonVar will we used, to check the damage line. See the for-loop
+                      let singletonVar = 0;
+                      let test_var = 0;
                       // For loop to seperate each element in an array. The time between 2 elements is 2 seconds
                       for (let i = 0; i < data.length; i++) {
                           setTimeout(() => {
@@ -188,38 +218,46 @@
                               if(Vibr[i] < 0.15){
                                   myChart_Vibr.data.datasets[0].backgroundColor = chartColorsBackground.color1;
                                   myChart_Vibr.data.datasets[0].borderColor = chartColorsBorder.color11;
-
                               }
                               if((Vibr[i] >= 0.15) && (Vibr[i] < 0.4)){
                                   myChart_Vibr.data.datasets[0].backgroundColor = chartColorsBackground.color2;
                                   myChart_Vibr.data.datasets[0].borderColor = chartColorsBorder.color22;
-
                               }
                               if(Vibr[i] >= 0.4){
                                   myChart_Vibr.data.datasets[0].backgroundColor = chartColorsBackground.color3;
                                   myChart_Vibr.data.datasets[0].borderColor = chartColorsBorder.color33;
+                                  // if the values of temperature across the damage line, it will appears a popup-window
+                                  if(singletonVar == 0){
+                                    singletonVar++;
+                                    
+									
+                                    
+                                  }
 
                               }
-                          }, i * 100); // standard = 2000; take 100 for fast presentation
+                              // checks if there is an unmounted piece -> Indicator: if there is 
+                              // a differnece between 0.02 m/s^2 at a 5 sec run time
+                              if(i % 5 == 0 && i != 0 && test_var == 0 && i >= 5){
+                                // calculate the difference for the last 5 sec - TO DO!
+                                let dif = Vibr[i-5] - Vibr[i];
+                                let absolute_dif = Math.abs(dif);
+								console.log (absolute_dif);
+								
+                                if(absolute_dif > 0.02){
+                                  //popup_losesTeil.classList.remove("inactive-vibr");
+                                popup_tol.classList.remove("inactive");
+                                  
+								   		
 
+                                  test_var++;
+                                }
+                              }
+                          }, i * 50); // standard = 2000; take 100 for fast presentation
                       }
-
                   }
-
               });
           };
-
-
           getDataVibr();
-
-          // Popup closing
-          let closeButton = document.querySelector(".popup-box img");
-          let popup = document.querySelector(".popup");
-          closeButton.onclick = function() {
-            popup.classList.add("inactive");
-            console.log("clicked");
-          }
       </script>
   </body>
-
 </html>
