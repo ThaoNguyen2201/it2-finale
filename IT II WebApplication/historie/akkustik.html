@@ -14,11 +14,12 @@
   <div id="top">
     <div class="logo">
       <a href="..\Condition\condition.html"> <img src="..\image\arrow.png" alt="pfeil" style="width:50px;height:30px;vertical-align :middle; "></a>
-      <p>Home / Historie / Akkustik</p>
+      <p>Home / Condition Monitoring / Akustik</p>
     </div>
     <div class="languages">
       <img src="..\image\British.png" alt="">
       <img style="margin-bottom: 4px;" src="..\image\germany.png" alt="">
+	  <img style="margin-bottom: 4px;" src="..\image\Vietnam.png" alt="">
     </div>
   </div>
 
@@ -55,12 +56,10 @@
     <div class="popup-box">
       <img src="..\image\error.png" alt="">
       <div style="display: flex; align-items: center; flex-direction: column; margin-top: 20px; position: relative;">
-        <p>
-          Ein Fehler ist beim Akkustik aufgetreten!
-        </p>
+        <p>Die Schadensgrenze wurde überschritten.<br> Klicken Sie auf 'Zur Fehlerbehandlung', um das Problem zu beheben.</p>
         <a href="..\fehlerHandlung\fehler.html">
           <div class="popup-fehler-box">
-            Zum Fehlerbehandlung
+            Zur Fehlerbehandlung
           </div>
         </a>
 
@@ -170,7 +169,18 @@
                     });
 
                     // Replace dot with comma
-                    let Laut = Acoustic.map(dots => dots.toString().replace(',', '.'))
+                    let Laut = Acoustic.map(dots => dots.toString().replace(',', '.'));
+
+                    // Popup closing
+                    let closeButton = document.querySelector(".popup-box img");
+
+                    let popup_tol = document.querySelector(".popup");
+                    closeButton.onclick = function() {
+                      popup_tol.classList.add("inactive");
+                    }
+                    // singletonVar will we used, to check the damage line. See the for-loop
+                    let singletonVar = 0;
+
                     // For loop to seperate each element in an array. The time between 2 elements is 2 seconds
                     for (let i = 0; i < data.length; i++) {
                         setTimeout(() => {
@@ -187,38 +197,26 @@
                             if(Laut[i] < 80){
                                 myChart_laut.data.datasets[0].backgroundColor = chartColorsBackground.color1;
                                 myChart_laut.data.datasets[0].borderColor = chartColorsBorder.color11;
-
                             }
                             if((Laut[i] >= 80) && (Laut[i] < 117)){
                                 myChart_laut.data.datasets[0].backgroundColor = chartColorsBackground.color2;
                                 myChart_laut.data.datasets[0].borderColor = chartColorsBorder.color22;
-
                             }
                             if(Laut[i] >= 117){
                                 myChart_laut.data.datasets[0].backgroundColor = chartColorsBackground.color3;
                                 myChart_laut.data.datasets[0].borderColor = chartColorsBorder.color33;
-
+                                // if the values of temperature across the damage line, it will appears a popup-window
+                                if(singletonVar == 0){
+                                  singletonVar++;
+                                  popup_tol.classList.remove("inactive");
+                                }
                             }
-                        }, i * 100); // standard = 2000; take 100 for fast presentation
-
+                        }, i * 50); // standard = 2000; take 100 for fast presentation
                     }
-
                 }
-
             });
         };
-
-
         getDataLaut();
-
-        // Popup closing
-        let closeButton = document.querySelector(".popup-box img");
-        let popup = document.querySelector(".popup");
-        closeButton.onclick = function() {
-          popup.classList.add("inactive");
-          console.log("clicked");
-        }
     </script>
   </body>
-
 </html>
